@@ -20,7 +20,7 @@ class Converter:
         self.temp_frame.grid()
 
         self.to_history_button = Button(self.temp_frame,
-                                     text="Help / Info",
+                                     text="History / Export",
                                      bg="#CC6600",
                                      fg="#FFFFFF",
                                      font=["Arial", "14", "bold"], width=12,
@@ -70,6 +70,30 @@ class HistoryExport:
         recent_intro_txt = (f"Below are {calc_amount} calculations "
                             f"(to the nearest degree)")
 
+        # Create string from calculations list (newest calculations first)
+        newest_first_string = ""
+        newest_first_list = list(reversed(calculations))
+
+        print("got to newest list and reversed it")
+        print("newest list", newest_first_list)
+
+        if len(newest_first_string) <= c.MAX_CALCS:
+
+            for item in newest_first_string[:-1]:
+                newest_first_string += item + "\n"
+                print("calc string so far...", newest_first_list)
+
+            newest_first_string += newest_first_list[-1]
+
+        # If we have more than five items...
+        else:
+            for item in newest_first_string[:c.MAX_CALCS-1]:
+                newest_first_string += item + "\n"
+                print("calc string so far...", newest_first_list)
+
+            newest_first_string += newest_first_list[c.MAX_CALCS-1]
+
+
         export_instruction_txt = ("Please push <Export> to save your calculations in "
                                   "file. If the the filename already exists, it will be ?replaced? ")
 
@@ -77,44 +101,44 @@ class HistoryExport:
 
         # Label list (label text | Format | bg )
         history_labels_list = [
-            ["History / Export", ["Arial", "16", "bold"], None],
-            [recent_intro_txt, ["Arial", "11"], None],
-            ["calculation list", ["Arial", "14"], calc_back],
-            [export_instruction_txt, ["Arial", "11"], None]
+            ["History / Export", "Arial", 16, "bold", None],
+            [recent_intro_txt, "Arial", 11,"", None],
+            [newest_first_string, "Arial", 14,"", calc_back],
+            [export_instruction_txt, "Arial", 11,"", None]
         ]
 
         history_label_ref = []
         for count, item in enumerate(history_labels_list):
-            make_label = Label(self.history_box, text=item[0], font=item[1],
-                               bg=item[2],
+            make_label = Label(self.history_box, text=item[0], font=(item[1], item[2],item[3]),
+                               bg=item[4],
                                wraplength=300, justify="left", padx=20, pady=10)
             make_label.grid(row=count)
 
             history_label_ref.append(make_label)
 
-            # Retrieve export instructions label so that we can
-            # configure it to shw the filename if the use exports the file
-            self.export_filename_label = history_label_ref[3]
+        # Retrieve export instructions label so that we can
+        # configure it to shw the filename if the use exports the file
+        self.export_filename_label = history_label_ref[3]
 
-            # make frame to hold buttons (two columns)
-            self.history_button_frame = Frame(self.history_box)
-            self.history_button_frame.grid(row = 4)
+        # make frame to hold buttons (two columns)
+        self.history_button_frame = Frame(self.history_box)
+        self.history_button_frame.grid(row = 4)
 
-            buttons_ref_list = []
+        buttons_ref_list = []
 
-            # button list (button text | bg colout | command | row | column)
-            button_details_list = [
-                ["Export", "#004C99", "", 0, 0],
-                ["Close", "#666666", partial(self.close_history, partner), 0 , 1]
-            ]
+        # button list (button text | bg colout | command | row | column)
+        button_details_list = [
+            ["Export", "#004C99", "", 0, 0],
+            ["Close", "#666666", partial(self.close_history, partner), 0 , 1]
+        ]
 
-            for btn in button_details_list:
-                self.make_button = Button(self.history_button_frame,
-                                          font= ["Arial", "12", "bold"],
-                                          text = btn[0], bg = btn[1],
-                                          fg = "#FFFFFF", width = 12,
-                                          command = btn[2])
-                self.make_button.grid(row=btn[3], column = btn[4], padx= 10, pady=10)
+        for btn in button_details_list:
+            self.make_button = Button(self.history_button_frame,
+                                      font= ["Arial", "12", "bold"],
+                                      text = btn[0], bg = btn[1],
+                                      fg = "#FFFFFF", width = 12,
+                                      command = btn[2])
+            self.make_button.grid(row=btn[3], column = btn[4], padx= 10, pady=10)
 
     def close_history(self, partner):
         """
